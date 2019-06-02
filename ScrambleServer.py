@@ -1,6 +1,7 @@
 import http.server
 import requests
 import os
+import uuid
 from urllib.parse import unquote, parse_qs
 import threading
 from socketserver import ThreadingMixIn
@@ -61,10 +62,10 @@ class Shortener(http.server.BaseHTTPRequestHandler):
         body = self.rfile.read(length).decode()
         params = parse_qs(body)
         longuri = params["longuri"][0]
-        shortname = params["shortname"][0]
+        #shortname = params["shortname"][0]
+        shortname = str(uuid.uuid1())
 
         if CheckURI(longuri):
-            # This URI is good!  Remember it under the specified name.
             memory[shortname] = longuri
 
             # Serve a redirect to the form.
