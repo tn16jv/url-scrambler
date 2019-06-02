@@ -76,7 +76,8 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             htmlStuff = '<p>New scrambled URL:</p>'
-            url = str(self.server.server_name) + ':' + str(self.server.server_port) + '/' + shortname
+            #url = str(self.server.server_name) + ':' + str(self.server.server_port) + '/' + shortname
+            url = 'https://url-scrambler.herokuapp.com/' + shortname
             self.wfile.write(form.format(htmlStuff + url).encode())
         else:
             # Didn't successfully fetch the long URI.
