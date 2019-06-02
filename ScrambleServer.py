@@ -81,12 +81,10 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             url = 'https://url-scrambler.herokuapp.com/' + shortname
             self.wfile.write(form.format(htmlStuff + url).encode())
         else:
-            # Didn't successfully fetch the long URI.
-            self.send_response(404)
-            self.send_header('Content-type', 'text/plain; charset=utf-8')
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
             self.end_headers()
-            self.wfile.write(
-                "Couldn't fetch URI '{}'. Sorry!".format(longuri).encode())
+            self.wfile.write(form.format("Couldn't fetch URL '{}'".format(longuri)).encode())
 
 
 class ThreadHTTPServer(ThreadingMixIn, http.server.HTTPServer):
