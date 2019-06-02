@@ -61,11 +61,14 @@ class Shortener(http.server.BaseHTTPRequestHandler):
         length = int(self.headers.get('Content-length', 0))
         body = self.rfile.read(length).decode()
         params = parse_qs(body)
-        longuri = params["longuri"][0]
+        try:
+            longuri = params["longuri"][0]
+        except:
+            longuri = ""
         #shortname = params["shortname"][0]
         shortname = str(uuid.uuid1())
 
-        if CheckURI(longuri):
+        if CheckURI(longuri) and longuri:
             memory[shortname] = longuri
 
             # Serve a redirect to the form.
