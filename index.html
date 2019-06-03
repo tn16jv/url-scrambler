@@ -4,22 +4,20 @@
     <meta charset="UTF-8">
     <title>Scramble a URL</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="Utility.js"></script>
 </head>
 <body>
-<div class="container">
+<div class="d-flex justify-content-center">
     <div class="page-header"><h1>Site for Scrambling/Obfuscating URLs to Share</h1></div>
 </div>
-<div class ="container">
-<form method="post">
+<div class="d-flex justify-content-center">
   <div class="form-group">
     <label for="longurl">Enter a URL to shorten/scramble:</label>
-    <input type="url" class="form-control" name="longuri" id="longurl" aria-describedby="emailHelp" placeholder="Enter a URL">
+    <input size="60" type="url" class="form-control" name="longuri" id="longurl" aria-describedby="emailHelp" placeholder="Enter a URL">
+      <button class="btn btn-info" onclick="postURL()">Submit</button>
   </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
 </div>
-<div class="container">
-{}
-</div>
+<div id="ajaxArea" class="container"></div>
 </body>
 </html>

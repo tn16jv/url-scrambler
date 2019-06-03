@@ -35,7 +35,14 @@ class Shortener(http.server.BaseHTTPRequestHandler):
         name = unquote(self.path[1:])
 
         if name:
-            if name in memory:
+            if name == 'Utility.js':
+                self.send_response(200)
+                self.send_header('Content-type', 'text/css')
+                self.end_headers()
+                javascript = open('Utility.js')
+                javascript = javascript.read()
+                self.wfile.write(javascript.encode())
+            elif name in memory:
                 # We know that name! Send a redirect to it.
                 self.send_response(303)
                 self.send_header('Location', memory[name])
@@ -65,29 +72,25 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             longuri = params["longuri"][0]
         except:
             longuri = ""
-        #shortname = params["shortname"][0]
-        shortname = str(uuid.uuid1())
+        shortname = str(uuid.uuid1())   # generate uid
 
         if CheckURI(longuri) and longuri:
             memory[shortname] = longuri
 
-            # Serve a redirect to the form.
-            #self.send_response(303)
-            #self.send_header('Location', '/')
-            #self.end_headers()
-
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
-            htmlStuff = '<p>New scrambled URL:</p>'
             #url = str(self.server.server_name) + ':' + str(self.server.server_port) + '/' + shortname
             url = 'https://url-scrambler.herokuapp.com/' + shortname
-            self.wfile.write(form.format(htmlStuff + url).encode())
+            htmlStuff = '<div><label>New scrambled URL:</label>' \
+                        '<input type="url" class="form-control" value="{}" id="myInput">' \
+                        '<button onclick="copyField()" class="btn btn-info">Copy URL</button></div>'.format(url)
+            self.wfile.write(htmlStuff.encode())
         else:
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
-            self.wfile.write(form.format("Couldn't fetch URL '{}'".format(longuri)).encode())
+            self.wfile.write("<div>Couldn't fetch URL '{}'</div>".format(longuri).encode())
 
 
 class ThreadHTTPServer(ThreadingMixIn, http.server.HTTPServer):
