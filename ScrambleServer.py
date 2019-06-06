@@ -49,10 +49,7 @@ class Shortener(http.server.BaseHTTPRequestHandler):
                 self.end_headers()
             else:
                 # We don't know that name! Send a 404 error.
-                self.send_response(404)
-                self.send_header('Content-type', 'text/plain; charset=utf-8')
-                self.end_headers()
-                self.wfile.write("I don't know '{}'.".format(name).encode())
+                self.send_error(404, 'URI specification "{}" not found'.format(name))
         else:
             # Root path. Send the form.
             self.send_response(200)
@@ -82,9 +79,9 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             #url = str(self.server.server_name) + ':' + str(self.server.server_port) + '/' + shortname
             url = 'https://url-scrambler.herokuapp.com/' + shortname
-            htmlStuff = '<div><label>New scrambled URL:</label>' \
+            htmlStuff = '<div><label>Scrambled URL for "{}":</label>' \
                         '<input type="url" class="form-control" value="{}" id="myInput">' \
-                        '<button onclick="copyField()" class="btn btn-info">Copy URL</button></div>'.format(url)
+                        '<button onclick="copyField()" class="btn btn-info">Copy URL</button></div>'.format(longuri, url)
             self.wfile.write(htmlStuff.encode())
         else:
             self.send_response(200)
