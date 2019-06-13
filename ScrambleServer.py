@@ -6,6 +6,7 @@ from urllib.parse import unquote, parse_qs
 import threading
 from socketserver import ThreadingMixIn
 
+remote_url = 'https://url-scrambler.herokuapp.com/'
 memory = {}
 
 f = open("index.html", "r")
@@ -78,7 +79,7 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             #url = str(self.server.server_name) + ':' + str(self.server.server_port) + '/' + shortname
-            url = 'https://url-scrambler.herokuapp.com/' + shortname
+            url = remote_url + shortname
             htmlStuff = '<div><label>Scrambled URL for "{}":</label>' \
                         '<input type="url" class="form-control" value="{}" id="myInput">' \
                         '<button onclick="copyField()" class="btn btn-info">Copy URL</button></div>'.format(longuri, url)
