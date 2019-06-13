@@ -14,7 +14,7 @@ function postURL() {
         data:'longuri=' + urlString,
         type: "POST",
         success:function(data){
-            $("#ajaxArea").append(data);
+            $("#ajaxArea").prepend(data);
         },
         error:function (){alert("failure");},
         async: true
