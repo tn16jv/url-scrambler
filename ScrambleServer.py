@@ -9,7 +9,7 @@ from DatabaseInterface import DatabaseConnector
 
 remote_url = 'https://url-scrambler.herokuapp.com/'
 
-db = DatabaseConnector(remote=False)
+db = DatabaseConnector(remote=True)
 
 f = open("index.html", "r")
 form = f.read()
