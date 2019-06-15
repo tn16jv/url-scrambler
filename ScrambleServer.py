@@ -9,7 +9,7 @@ from DatabaseInterface import DatabaseConnector
 
 remote_url = 'https://url-scrambler.herokuapp.com/'
 
-db = DatabaseConnector(remote=True)
+db = DatabaseConnector(remote=False)
 
 f = open("index.html", "r")
 form = f.read()
@@ -74,7 +74,8 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             longuri = ""
         shortname = str(uuid.uuid1())   # generate uid
 
-        ip = self.client_address[0]     # ip address of client doing request
+        #ip = self.client_address[0]     # ip address of client doing request
+        ip = self.headers.get('Host').split(':')[0]
 
         if CheckURI(longuri) and longuri:
             db.insert(longuri, shortname, ip)
