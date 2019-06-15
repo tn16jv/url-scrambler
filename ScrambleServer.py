@@ -5,9 +5,11 @@ import uuid
 from urllib.parse import unquote, parse_qs
 import threading
 from socketserver import ThreadingMixIn
+from DatabaseInterface import DatabaseConnector
 
 remote_url = 'https://url-scrambler.herokuapp.com/'
-memory = {}
+
+db = DatabaseConnector()
 
 f = open("index.html", "r")
 form = f.read()
@@ -43,10 +45,10 @@ class Shortener(http.server.BaseHTTPRequestHandler):
                 javascript = open('Utility.js')
                 javascript = javascript.read()
                 self.wfile.write(javascript.encode())
-            elif name in memory:
+            elif db.select(name) != None:
                 # We know that name! Send a redirect to it.
                 self.send_response(303)
-                self.send_header('Location', memory[name])
+                self.send_header('Location', db.select(name))
                 self.end_headers()
             else:
                 # We don't know that name! Send a 404 error.
@@ -73,7 +75,7 @@ class Shortener(http.server.BaseHTTPRequestHandler):
         shortname = str(uuid.uuid1())   # generate uid
 
         if CheckURI(longuri) and longuri:
-            memory[shortname] = longuri
+            db.insert(longuri, shortname)
 
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
