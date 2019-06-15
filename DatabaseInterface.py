@@ -10,7 +10,7 @@ class DatabaseConnector:
         #self.conn = psycopg2.connect(db_url)
 
         DATABASE_URL = os.environ['DATABASE_URL']
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         self.cur = self.conn.cursor()
 
     def test(self):
