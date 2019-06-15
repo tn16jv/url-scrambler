@@ -8,11 +8,10 @@ class DatabaseConnector:
         #proc = subprocess.Popen('heroku config:get DATABASE_URL -a url-scrambler', stdout=subprocess.PIPE, shell=True)
         #db_url = proc.stdout.read().decode('utf-8').strip() + '?sslmode=require'
         #self.conn = psycopg2.connect(db_url)
-        #self.cur = self.conn.cursor()
 
         DATABASE_URL = os.environ['DATABASE_URL']
-
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        self.cur = self.conn.cursor()
 
     def test(self):
         self.cur.execute("INSERT INTO urls (original, scrambled) VALUES ('test1', 'test2')")
