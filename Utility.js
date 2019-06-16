@@ -48,6 +48,6 @@ function createLinkDiv(longurl, shorturl) {
         var linkDiv = $('<div class="mb-4"></div>').append(label).append(input).append(button);
         return linkDiv;
     } catch (e) {
-        return $("<div></div>").text(urlData);
+        return $("<div></div>").text(`The link ${longurl} could not be reached. Are you sure it's correct?`);
     }
 }
