@@ -24,10 +24,10 @@ class DatabaseConnector:
 
         self.conn.commit()
 
-    def insert(self, original, scrambled, ip):
+    def insert(self, original, scrambled, ip, id):
         self.cur.execute(
-            "INSERT INTO urls (original, scrambled, ipv4) VALUES ('{}', '{}', '{}')"
-                .format(original, scrambled, ip))
+            "INSERT INTO urls (original, scrambled, ipv4, cookieId) VALUES ('{}', '{}', '{}', '{}')"
+                .format(original, scrambled, ip, id))
         self.conn.commit()
 
     def select(self, scrambled):
@@ -40,3 +40,12 @@ class DatabaseConnector:
         except TypeError:
             return None
 
+    def selectIdUrls(self, cookieId):
+        self.cur.execute(
+            "SELECT original, scrambled FROM urls WHERE cookieid='{}'".format(cookieId)
+        )
+        try:
+            result = self.cur.fetchall()
+            return result
+        except TypeError:
+            return None

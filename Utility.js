@@ -14,20 +14,38 @@ function postURL() {
         data:'longuri=' + urlString,
         type: "POST",
         success:function(data){
-            $("#ajaxArea").prepend(createLinkDiv(data));
+            var jsonData = JSON.parse(data)
+            $("#ajaxArea").prepend(createLinkDiv(jsonData.longurl, jsonData.shorturl));
         },
-        error:function (){alert("failure");},
+        error:function (){alert("Could not create URL");},
         async: true
     });
 }
 
-function createLinkDiv(urlData) {
+$(document).ready(function() {
+    $.ajax({
+        url:'/PastUrls',
+        type: 'GET',
+        success:function(data){
+            var jsonData = JSON.parse(data)
+            var longurl, shorturl
+            for (var key in jsonData) {
+                longurl = key
+                shorturl = jsonData[key]
+                $("#pastUrlsArea").append(createLinkDiv(longurl, shorturl));
+            }
+        },
+        error:function (){alert("failure");},
+        async: true
+    });
+});
+
+function createLinkDiv(longurl, shorturl) {
     try {
-        var json = JSON.parse(urlData)
-        var label = $("<label></label>").text("Scrambled URL for " + json.longurl);
-        var input = $("<input type='url' class='form-control' value=' " + json.shorturl + " ' + id ='" + json.shorturl + "'>");
-        var button = $("<button onclick='copyField(\"" + json.shorturl +"\")' class='btn btn-info'></button>").text("Copy URL");
-        var linkDiv = $("<div></div>").append(label).append(input).append(button);
+        var label = $("<label></label>").text("Scrambled URL for " + longurl);
+        var input = $("<input type='url' class='form-control' value=' " + shorturl + " ' + id ='" + shorturl + "'>");
+        var button = $("<button onclick='copyField(\"" + shorturl +"\")' class='btn btn-info'></button>").text("Copy URL");
+        var linkDiv = $("<div class='mb-4'></div>").append(label).append(input).append(button);
         return linkDiv;
     } catch (e) {
         return $("<div></div>").text(urlData);

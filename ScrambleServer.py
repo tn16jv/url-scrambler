@@ -3,6 +3,7 @@ import requests
 import os
 import uuid
 import json
+from http import cookies
 from urllib.parse import unquote, parse_qs
 import threading
 from socketserver import ThreadingMixIn
@@ -10,7 +11,7 @@ from DatabaseInterface import DatabaseConnector
 
 remote_url = 'https://url-scrambler.herokuapp.com/'
 
-db = DatabaseConnector(remote=False)
+db = DatabaseConnector(remote=True)
 
 f = open("index.html", "r")
 form = f.read()
@@ -38,6 +39,19 @@ class Shortener(http.server.BaseHTTPRequestHandler):
         # Strip off the / and we have either empty string or a name.
         name = unquote(self.path[1:])
 
+        if 'cookie' not in self.headers:
+            cookieId = uuid.uuid1()
+            c = cookies.SimpleCookie()
+            c['yourId'] = cookieId
+            c['yourId']['max-age'] = 60 * 60 * 24 * 365   # 1 year for cookie
+            print(c['yourId'].value)
+
+            self.send_response(303)  # redirect via GET
+            self.send_header('Location', '/')
+            self.send_header('Set-Cookie', c['yourId'].OutputString())
+            self.end_headers()
+            return  # don't need to run the rest of code if this is the first visit
+
         if name:
             if name == 'Utility.js':
                 self.send_response(200)
@@ -46,6 +60,18 @@ class Shortener(http.server.BaseHTTPRequestHandler):
                 javascript = open('Utility.js')
                 javascript = javascript.read()
                 self.wfile.write(javascript.encode())
+            elif name == 'PastUrls':
+                c = cookies.SimpleCookie(self.headers['cookie'])
+                cookieId = c['yourId'].value
+                pastUrls = dict(db.selectIdUrls(cookieId))  # convert list of tuples to dictionary
+                for key in pastUrls:
+                    pastUrls[key] = remote_url + pastUrls[key]  # add remote_url to complete the URL link
+                pastUrls = json.dumps(pastUrls)
+
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                self.wfile.write((str(pastUrls).encode()))
             elif db.select(name) != None:
                 # We know that name! Send a redirect to it.
                 self.send_response(303)
@@ -76,9 +102,11 @@ class Shortener(http.server.BaseHTTPRequestHandler):
         shortname = str(uuid.uuid1())   # generate uid
 
         ip = self.client_address[0]     # ip address of client doing request
+        c = cookies.SimpleCookie(self.headers['cookie'])
+        cookieId = c['yourId'].value
 
         if CheckURI(longuri) and longuri:
-            db.insert(longuri, shortname, ip)
+            db.insert(longuri, shortname, ip, cookieId)
 
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
