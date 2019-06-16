@@ -19,7 +19,7 @@ function postURL() {
                 $('#ajaxArea').prepend(createLinkDiv(jsonData.longurl, jsonData.shorturl));
             } catch (e) {
                 var errorDiv = $('<div class="mb-4"></div>').text(data);
-                $('#ajaxArea').append(errorDiv);
+                $('#ajaxArea').prepend(errorDiv);
             }
         },
         error:function (){alert('Could not create URL');},

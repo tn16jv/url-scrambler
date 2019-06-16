@@ -11,7 +11,7 @@ from DatabaseInterface import DatabaseConnector
 
 remote_url = 'https://url-scrambler.herokuapp.com/'
 
-db = DatabaseConnector(remote=True)
+db = DatabaseConnector(remote=False)
 
 f = open("index.html", "r")
 form = f.read()
@@ -31,6 +31,16 @@ def CheckURI(uri, timeout=5):
     except requests.RequestException:
         # If the GET request raised an exception, it's not OK.
         return False
+
+
+def ConvertURI(uri):
+    uriTest = uri.split('.')
+    if uriTest[0] == 'www':
+        return 'http://' + uri
+    elif uriTest[0] != 'http://www' or 'https://www':
+        return 'http://www.' + uri
+    else:
+        return uri
 
 
 class Shortener(http.server.BaseHTTPRequestHandler):
@@ -97,16 +107,18 @@ class Shortener(http.server.BaseHTTPRequestHandler):
         params = parse_qs(body)
         try:
             longuri = params["longuri"][0]
+            longuri_converted = ConvertURI(longuri)
         except:
             longuri = ""
+            longuri_converted = ""
         shortname = str(uuid.uuid1())   # generate uid
 
         ip = self.client_address[0]     # ip address of client doing request
         c = cookies.SimpleCookie(self.headers['cookie'])
         cookieId = c['yourId'].value
 
-        if CheckURI(longuri) and longuri:
-            db.insert(longuri, shortname, ip, cookieId)
+        if CheckURI(longuri_converted) and longuri:
+            db.insert(longuri_converted, shortname, ip, cookieId)
 
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
