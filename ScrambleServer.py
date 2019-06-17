@@ -34,13 +34,16 @@ def CheckURI(uri, timeout=5):
 
 
 def ConvertURI(uri):
-    uriTest = uri.split('.')
-    if uriTest[0] == 'www':
-        return 'http://' + uri
-    elif uriTest[0] != 'http://www' or 'https://www':
-        return 'http://www.' + uri
+    uriTestDot = uri.split('.')
+    uriTestSlash = uri.split('/')
+
+    if uriTestDot[0] == 'www':
+        return 'http://' + uri  # user gave domain level url with www, such as 'www.google.ca'
+    elif uriTestDot[0] != 'http://www' and uriTestDot[0] != 'https://www'\
+            and uriTestSlash[0] != 'http:' and uriTestSlash[0] != 'https:':
+        return 'http://www.' + uri  # user gave domain level url 'google.ca'
     else:
-        return uri
+        return uri  # user gave complete url, either 'https://google.ca' or 'https://www.google.ca'
 
 
 class Shortener(http.server.BaseHTTPRequestHandler):
@@ -65,7 +68,7 @@ class Shortener(http.server.BaseHTTPRequestHandler):
         if name:
             if name == 'Utility.js':
                 self.send_response(200)
-                self.send_header('Content-type', 'text/css')
+                self.send_header('Content-type', 'application/javascript')
                 self.end_headers()
                 javascript = open('Utility.js')
                 javascript = javascript.read()
@@ -82,7 +85,7 @@ class Shortener(http.server.BaseHTTPRequestHandler):
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
                 self.wfile.write((str(pastUrls).encode()))
-            elif db.select(name) != None:
+            elif db.select(name) is not None:
                 # We know that name! Send a redirect to it.
                 self.send_response(303)
                 self.send_header('Location', db.select(name))
@@ -95,9 +98,6 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
-            # List the known associations in the form.
-            #known = "\n".join("{} : {}".format(key, memory[key])
-            #                  for key in sorted(memory.keys()))
             self.wfile.write(form.encode())
 
     def do_POST(self):
@@ -144,6 +144,10 @@ class ThreadHTTPServer(ThreadingMixIn, http.server.HTTPServer):
 
 
 if __name__ == '__main__':
-    server_address = ('', int(os.environ.get('PORT', '8000')))
-    httpd = ThreadHTTPServer(server_address, Shortener)
-    httpd.serve_forever()
+    try:
+        server_address = ('', int(os.environ.get('PORT', '8000')))
+        httpd = ThreadHTTPServer(server_address, Shortener)
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print('Interrupted from command line. Closing server.')
+        httpd.shutdown()
