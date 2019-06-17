@@ -58,7 +58,6 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             c = cookies.SimpleCookie()
             c['yourId'] = cookieId
             c['yourId']['max-age'] = 60 * 60 * 24 * 365   # 1 year for cookie
-            print(c['yourId'].value)
 
             self.send_response(303)  # redirect via GET
             self.send_header('Location', '/')
@@ -116,7 +115,10 @@ class Shortener(http.server.BaseHTTPRequestHandler):
 
         ip = self.client_address[0]     # ip address of client doing request
         c = cookies.SimpleCookie(self.headers['cookie'])
-        cookieId = c['yourId'].value
+        try:
+            cookieId = c['yourId'].value
+        except KeyError:
+            cookieId = ''
 
         if CheckURI(longuri_converted) and longuri:
             db.insert(longuri_converted, shortname, ip, cookieId)
