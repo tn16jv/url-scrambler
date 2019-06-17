@@ -6,6 +6,7 @@ import json
 from http import cookies
 from urllib.parse import unquote, parse_qs
 import threading
+import time
 from socketserver import ThreadingMixIn
 from DatabaseInterface import DatabaseConnector
 
@@ -143,8 +144,18 @@ class ThreadHTTPServer(ThreadingMixIn, http.server.HTTPServer):
     "This is an HTTPServer that supports thread-based concurrency."
 
 
+class SelfPinger(threading.Thread):
+    def run(self):
+        while True:
+            requests.get(remote_url)
+            time.sleep(29 * 60)     # ping once every 29 minutes
+
+
 if __name__ == '__main__':
     try:
+        ping_thread = SelfPinger()
+        ping_thread.start()
+
         server_address = ('', int(os.environ.get('PORT', '8000')))
         httpd = ThreadHTTPServer(server_address, Shortener)
         httpd.serve_forever()

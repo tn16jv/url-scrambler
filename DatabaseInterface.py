@@ -16,14 +16,6 @@ class DatabaseConnector:
             self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         self.cur = self.conn.cursor()
 
-    def test(self):
-        self.cur.execute("INSERT INTO urls (original, scrambled) VALUES ('test1', 'test2')")
-
-        self.cur.execute("SELECT * FROM urls")
-        print(self.cur.fetchall())
-
-        self.conn.commit()
-
     def insert(self, original, scrambled, ip, id):
         self.cur.execute(
             "INSERT INTO urls (original, scrambled, ipv4, cookieId) VALUES ('{}', '{}', '{}', '{}')"
