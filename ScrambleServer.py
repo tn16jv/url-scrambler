@@ -19,13 +19,13 @@ form = f.read()
 
 def CheckURI(uri, timeout=5):
     '''Check whether this URI is reachable, i.e. does it return a 200 OK?
-
-    This function returns True if a GET request to uri returns a 200 OK, and
-    False if that GET request returns any other response, or doesn't return
-    (i.e. times out).
+    If there are any other responses or it times out, it's not reachable.
     '''
     try:
-        r = requests.get(uri, timeout=timeout)
+        request_headers = {
+            'user-agent': 'url-scrambler'   # need custom user-agent or sites may send a 429 (too many requests)
+        }
+        r = requests.get(uri, timeout=timeout, headers=request_headers)
         # If the GET request returns, was it a 200 OK?
         return r.status_code == 200
     except requests.RequestException:
@@ -34,13 +34,13 @@ def CheckURI(uri, timeout=5):
 
 
 def ConvertURI(uri):
-    uriTestDot = uri.split('.')
-    uriTestSlash = uri.split('/')
+    uri_dot = uri.split('.')
+    uri_slash = uri.split('/')
 
-    if uriTestDot[0] == 'www':
+    if uri_dot[0] == 'www':
         return 'http://' + uri  # user gave domain level url with www, such as 'www.google.ca'
-    elif uriTestDot[0] != 'http://www' and uriTestDot[0] != 'https://www'\
-            and uriTestSlash[0] != 'http:' and uriTestSlash[0] != 'https:':
+    elif uri_dot[0] != 'http://www' and uri_dot[0] != 'https://www'\
+            and uri_slash[0] != 'http:' and uri_slash[0] != 'https:':
         return 'http://www.' + uri  # user gave domain level url 'google.ca'
     else:
         return uri  # user gave complete url, either 'https://google.ca' or 'https://www.google.ca'

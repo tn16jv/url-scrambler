@@ -51,6 +51,6 @@ function createLinkDiv(longurl, shorturl) {
     label.append(link)
     var input = $(`<input type='url' class='form-control' readonly value=${shorturl} id=${shorturl}>`);
     var button = $(`<button onclick='copyField("${shorturl}")' class='btn btn-info'></button>`).text('Copy URL');
-    var linkDiv = $('<div class="mb-4"></div>').append(label).append(input).append(button);
+    var linkDiv = $('<div class="mb-4 mt-4"></div>').append(label).append(input).append(button);
     return linkDiv;
 }
