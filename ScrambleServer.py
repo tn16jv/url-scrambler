@@ -76,7 +76,8 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             elif name == 'PastUrls':
                 c = cookies.SimpleCookie(self.headers['cookie'])
                 cookieId = c['yourId'].value
-                pastUrls = dict((db.selectIdUrls(cookieId)).reverse())  # convert list of tuples to dictionary
+                pastUrls = reversed(db.selectIdUrls(cookieId))  # reverse database order, so it's newest to oldest
+                pastUrls = dict(pastUrls)  # convert list of tuples to dictionary
                 for key in pastUrls:
                     pastUrls[key] = remote_url + pastUrls[key]  # add remote_url to complete the URL link
                 pastUrls = json.dumps(pastUrls)
