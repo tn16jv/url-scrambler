@@ -10,6 +10,10 @@ function copyField(elementId) {
 
 function postURL() {
     urlString = document.getElementById('longurl').value;
+    var loader = $('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+    $('#submitButton').text('');
+    $('#submitButton').append(loader);
+    $('#submitButton').prop('disabled', true);
     $.ajax({
         data:'longuri=' + urlString,
         type: 'POST',
@@ -22,8 +26,14 @@ function postURL() {
                 $('#ajaxArea').prepend(errorDiv);
             }
         },
-        error:function (){alert('Could not create URL');},
+        error:function (){
+            alert('Could not create URL');
+            },
         async: true
+    }).done(function() {    // Want to re-enable the button regardless of success or failure.
+        $('#submitButton').empty();
+        $('#submitButton').text('Submit');
+        $('#submitButton').removeAttr('disabled');
     });
 }
 
