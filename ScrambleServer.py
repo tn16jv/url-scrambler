@@ -4,7 +4,7 @@ import os
 import uuid
 import json
 from http import cookies
-from urllib.parse import unquote, parse_qs
+from urllib.parse import unquote, parse_qs, quote_plus, unquote_plus
 import threading
 import time
 from socketserver import ThreadingMixIn
@@ -105,6 +105,7 @@ class Shortener(http.server.BaseHTTPRequestHandler):
         # Decode the form data.
         length = int(self.headers.get('Content-length', 0))
         body = self.rfile.read(length).decode()
+        body = body[:8] + quote_plus(body[8:])  # Query parameters in user's url will not be parsed.
         params = parse_qs(body)
         try:
             longuri = params["longuri"][0]

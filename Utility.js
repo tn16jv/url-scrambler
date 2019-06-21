@@ -17,6 +17,7 @@ function postURL() {
     $.ajax({
         data:'longuri=' + urlString,
         type: 'POST',
+        timeout: 5000,
         success:function(data){
             try {
                 var jsonData = JSON.parse(data)
@@ -25,12 +26,12 @@ function postURL() {
                 var errorDiv = $('<div class="d-flex justify-content-center mb-3 mt-3"></div>').text(data);
                 $('#ajaxArea').prepend(errorDiv);
             }
-        },
-        error:function (){
-            alert('Could not create URL');
+            },
+        error:function (xhr, status){
+            alert('Server Issue: ' + status);
             },
         async: true
-    }).done(function() {    // Want to re-enable the button regardless of success or failure.
+    }).always(function() {    // Want to re-enable the button regardless of success or failure.
         $('#submitButton').empty();
         $('#submitButton').text('Submit');
         $('#submitButton').removeAttr('disabled');

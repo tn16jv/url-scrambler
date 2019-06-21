@@ -18,14 +18,13 @@ class DatabaseConnector:
 
     def insert(self, original, scrambled, ip, id):
         self.cur.execute(
-            "INSERT INTO urls (original, scrambled, ipv4, cookieId) VALUES ('{}', '{}', '{}', '{}')"
-                .format(original, scrambled, ip, id))
+            "INSERT INTO urls (original, scrambled, ipv4, cookieId) VALUES (%s, %s, %s, %s)",
+            [original, scrambled, ip, id])
         self.conn.commit()
 
     def select(self, scrambled):
         self.cur.execute(
-            "SELECT original FROM urls WHERE scrambled='{}'"
-                .format(scrambled))
+            "SELECT original FROM urls WHERE scrambled=%s", [scrambled])
         try:
             result = self.cur.fetchone()
             return result[0]    # trim
@@ -34,8 +33,7 @@ class DatabaseConnector:
 
     def selectIdUrls(self, cookieId):
         self.cur.execute(
-            "SELECT original, scrambled FROM urls WHERE cookieid='{}'".format(cookieId)
-        )
+            "SELECT original, scrambled FROM urls WHERE cookieid=%s", [cookieId])
         try:
             result = self.cur.fetchall()
             return result
