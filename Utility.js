@@ -10,7 +10,7 @@ function copyField(elementId) {
 
 function postURL() {
     urlString = document.getElementById('longurl').value;
-    var loader = $('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+    var loader = $('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>');
     $('#submitButton').text('');
     $('#submitButton').append(loader);
     $('#submitButton').prop('disabled', true);
@@ -22,7 +22,7 @@ function postURL() {
                 var jsonData = JSON.parse(data)
                 $('#ajaxArea').prepend(createLinkDiv(jsonData.longurl, jsonData.shorturl));
             } catch (e) {
-                var errorDiv = $('<div class="mb-4"></div>').text(data);
+                var errorDiv = $('<div class="d-flex justify-content-center mb-3 mt-3"></div>').text(data);
                 $('#ajaxArea').prepend(errorDiv);
             }
         },
@@ -59,8 +59,9 @@ function createLinkDiv(longurl, shorturl) {
     var label = $('<label></label>').text('Scrambled URL for: ');
     var link = $(`<a href=${shorturl}></a>`).text(`${longurl}`);
     label.append(link)
-    var input = $(`<input type='url' class='form-control' readonly value=${shorturl} id=${shorturl}>`);
+    var input = $(`<input type='url' class='form-control' size="80" readonly value=${shorturl} id=${shorturl}>`);
     var button = $(`<button onclick='copyField("${shorturl}")' class='btn btn-info'></button>`).text('Copy URL');
-    var linkDiv = $('<div class="mb-4 mt-4"></div>').append(label).append(input).append(button);
+    var linkDiv = $('<div class="form-group mb-3 mt-3"></div>').append(label).append(input).append(button);
+    linkDiv = $('<div class="d-flex justify-content-center"></div>').append(linkDiv);
     return linkDiv;
 }
