@@ -57,7 +57,7 @@ $(document).ready(function() {
 
 function createLinkDiv(longurl, shorturl) {
     var label = $('<label></label>').text('Scrambled URL for: ');
-    var link = $(`<a href=${shorturl}></a>`).text(`${longurl}`);
+    var link = $(`<a target="_blank" href=${shorturl}></a>`).text(`${longurl}`);
     label.append(link)
     var input = $(`<input type='url' class='form-control' size="80" readonly value=${shorturl} id=${shorturl}>`);
     var button = $(`<button onclick='copyField("${shorturl}")' class='btn btn-info'></button>`).text('Copy URL');
