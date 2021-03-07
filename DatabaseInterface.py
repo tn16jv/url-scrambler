@@ -39,3 +39,9 @@ class DatabaseConnector:
             return result
         except TypeError:
             return None
+
+    def urlVisits(self, scrambled, ip):
+        self.cur.execute(
+            "INSERT INTO UrlVisits (scrambled, ipv4) VALUES (%s, %s)",
+            [scrambled, ip])
+        self.conn.commit()

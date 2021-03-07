@@ -88,6 +88,8 @@ class Shortener(http.server.BaseHTTPRequestHandler):
                 self.wfile.write((str(pastUrls).encode()))
             elif db.select(name) is not None:
                 # We know that name! Send a redirect to it.
+                ip = self.client_address[0]  # ip address of client doing request
+                db.urlVisits(name, ip)
                 self.send_response(303)
                 self.send_header('Location', db.select(name))
                 self.end_headers()
