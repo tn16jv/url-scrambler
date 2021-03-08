@@ -66,7 +66,14 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             return  # don't need to run the rest of code if this is the first visit
 
         if name:
-            if name == 'Utility.js':
+            if name == 'favicon.png':
+                self.send_response(200)
+                self.send_header('Content-type', 'image/png')
+                self.end_headers()
+                img = open('favicon.png', 'rb')
+                img = img.read()
+                self.wfile.write(img)
+            elif name == 'Utility.js':
                 self.send_response(200)
                 self.send_header('Content-type', 'application/javascript')
                 self.end_headers()
