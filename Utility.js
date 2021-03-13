@@ -39,6 +39,7 @@ function postURL() {
 }
 
 $(document).ready(function() {
+    $("#longurl").focus();
     $.ajax({
         url:'/PastUrls',
         type: 'GET',
