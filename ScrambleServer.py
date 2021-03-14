@@ -14,9 +14,6 @@ remote_url = 'https://url-scrambler.herokuapp.com/'
 
 db = DatabaseConnector(remote=True)
 
-f = open("index.html", "r")
-form = f.read()
-
 
 def CheckURI(uri, timeout=5):
     '''Check whether this URI is reachable, i.e. does it return a 200 OK?
@@ -66,7 +63,14 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             return  # don't need to run the rest of code if this is the first visit
 
         if name:
-            if name == 'favicon.png':
+            if name == "Guide":
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                g = open("guide.html", "r")
+                guide = g.read()
+                self.wfile.write(guide.encode())
+            elif name == 'favicon.png':
                 self.send_response(200)
                 self.send_header('Content-type', 'image/png')
                 self.end_headers()
@@ -80,6 +84,7 @@ class Shortener(http.server.BaseHTTPRequestHandler):
                 javascript = open('Utility.js')
                 javascript = javascript.read()
                 self.wfile.write(javascript.encode())
+
             elif name == 'PastUrls':
                 c = cookies.SimpleCookie(self.headers['cookie'])
                 cookieId = c['yourId'].value
@@ -108,6 +113,8 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
+            f = open("index.html", "r")
+            form = f.read()
             self.wfile.write(form.encode())
 
     def do_POST(self):
